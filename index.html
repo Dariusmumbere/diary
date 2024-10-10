@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Diary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        textarea {
+            resize: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #entriesContainer {
+            margin-top: 20px;
+        }
+
+        .entry {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .entry-date {
+            font-weight: bold;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .entry-text {
+            margin-top: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dodan Diary,&nbsp;&nbsp;Jeremiah 29:11</h1>
+        <form id="diaryForm">
+            <textarea id="diaryEntry" placeholder="Dear Dodan ite your entry here..." rows="5"></textarea>
+            <button type="submit">Save Entry</button>
+        </form>
+        <div id="entriesContainer">
+            <h2>Previous Entries</h2>
+            <div id="diaryEntries"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const diaryForm = document.getElementById('diaryForm');
+            const diaryEntry = document.getElementById('diaryEntry');
+            const diaryEntriesContainer = document.getElementById('diaryEntries');
+
+            // Load entries from localStorage when the page loads
+            loadEntries();
+
+            // Save a new entry
+            diaryForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                
+                const entryText = diaryEntry.value.trim();
+                if (entryText !== '') {
+                    const entry = {
+                        date: new Date().toLocaleString(),
+                        text: entryText
+                    };
+                    saveEntry(entry);
+                    displayEntry(entry);
+                    diaryEntry.value = '';
+                }
+            });
+
+            // Save entry to localStorage
+            function saveEntry(entry) {
+                const entries = getEntries();
+                entries.push(entry);
+                localStorage.setItem('diaryEntries', JSON.stringify(entries));
+            }
+
+            // Get entries from localStorage
+            function getEntries() {
+                const entries = localStorage.getItem('diaryEntries');
+                return entries ? JSON.parse(entries) : [];
+            }
+
+            // Display all entries on the page
+            function loadEntries() {
+                const entries = getEntries();
+                entries.forEach(entry => displayEntry(entry));
+            }
+
+            // Display a single entry
+            function displayEntry(entry) {
+                const entryDiv = document.createElement('div');
+                entryDiv.classList.add('entry');
+
+                const entryDate = document.createElement('div');
+                entryDate.classList.add('entry-date');
+                entryDate.textContent = entry.date;
+
+                const entryText = document.createElement('div');
+                entryText.classList.add('entry-text');
+                entryText.textContent = entry.text;
+
+                entryDiv.appendChild(entryDate);
+                entryDiv.appendChild(entryText);
+                diaryEntriesContainer.appendChild(entryDiv);
+            }
+        });
+    </script>
+</body>
+</html>
